@@ -60,8 +60,6 @@ users_to_seed = [
     ('user7', 'Grace', 'grace@example.com', 'pass123', True, 30000)
 ]
 
-cursor = conn.cursor()
-
 for user in users_to_seed:
     cursor.execute("SELECT 1 FROM users WHERE id = %s", (user[0],))
     if cursor.fetchone() is None:
@@ -83,7 +81,7 @@ print("🌱 User seeding complete")
 def health():
     return jsonify({"status": "ok"}), 200
 
-# ✅ User Login Route
+# ✅ User Login Route (return email if valid)
 @app.route("/validateuser", methods=["POST"])
 def validate_user():
     data = request.json
@@ -97,15 +95,16 @@ def validate_user():
         time.sleep(5)  # Simulate 5-second delay
 
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = %s AND password = %s", (user_id, password))
+    cursor.execute("SELECT email FROM users WHERE id = %s AND password = %s", (user_id, password))
     user = cursor.fetchone()
     cursor.close()
 
-    print(f"🔐 VALIDATE: {user_id} ->", "FOUND" if user else "NOT FOUND")
-
     if user:
-        return jsonify({"status": "success", "user": user_id})
+        email = user[0]
+        print(f"🔐 VALIDATE: {user_id} -> FOUND (email: {email})")
+        return jsonify({"status": "success", "user": user_id, "email": email})
     else:
+        print(f"🔐 VALIDATE: {user_id} -> NOT FOUND")
         return jsonify({"status": "failed"}), 401
 
 # ✅ Compliance check fetch: Get KYC and balance
