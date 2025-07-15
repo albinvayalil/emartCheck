@@ -36,49 +36,65 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// ✅ Send OTP Route
+// ✅ Send OTP Route (validate user + send OTP to registered email)
 app.post("/send-otp", async (req, res) => {
-    const { email } = req.body;
-    if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[email] = otp;
-
-    // Send email via Office365
     try {
-        await transporter.sendMail({
-            from: '"eMart OTP" ignio1.platformtesting@ext.digitate.com', // 🔥 Replace with your Office365 email
-            to: 'ignio1.platformtesting@ext.digitate.com',
-            subject: "Your eMart OTP",
-            text: `Your OTP is: ${otp}. It will expire in 5 minutes.`
+        // ✅ Step 1: Validate credentials
+        const validationResponse = await axios.post("http://order-processor-python:5002/validateuser", {
+            user_id: username,
+            password: password
         });
 
-        console.log(`📧 Sent OTP ${otp} to ${email}`);
-        res.json({ message: "OTP sent successfully" });
+        if (validationResponse.data.status !== "success") {
+            console.log(`❌ Invalid credentials for ${username}`);
+            return res.status(401).json({ message: "Invalid username or password" });
+        }
+
+        // ✅ Step 2: Get registered email from validation response
+        const registeredEmail = validationResponse.data.email; // 📨 Expecting Python API to send email
+        if (!registeredEmail) {
+            console.log(`❌ No registered email found for user ${username}`);
+            return res.status(404).json({ message: "Registered email not found" });
+        }
+
+        // ✅ Step 3: Generate OTP and send email
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        otpStore[username] = otp;
+
+        await transporter.sendMail({
+            from: '"eMart OTP" <ignio1.platformtesting@ext.digitate.com>',
+            to: registeredEmail,
+            subject: "Your eMart OTP",
+            text: `Hello ${username},\n\nYour OTP is: ${otp}. It will expire in 5 minutes.\n\nThank you,\neMart Team`
+        });
+
+        console.log(`📧 Sent OTP ${otp} to ${registeredEmail} for user ${username}`);
+        res.json({ message: "OTP sent to your registered email" });
     } catch (error) {
-        console.error("Error sending OTP email:", error.message);
-        res.status(500).json({ message: "Failed to send OTP email" });
+        console.error("Error in send-otp:", error.message);
+        res.status(500).json({ message: "Failed to send OTP" });
     }
 });
 
 // ✅ Verify OTP Route
 app.post("/verify-otp", (req, res) => {
-    const { email, otp } = req.body;
-    if (!email || !otp) {
-        return res.status(400).json({ message: "Email and OTP are required" });
+    const { username, otp } = req.body;
+    if (!username || !otp) {
+        return res.status(400).json({ message: "Username and OTP are required" });
     }
 
-    const storedOtp = otpStore[email];
+    const storedOtp = otpStore[username];
     if (storedOtp === otp) {
-        // OTP verified, remove it from store
-        delete otpStore[email];
-        console.log(`✅ OTP verified for ${email}`);
+        delete otpStore[username]; // ✅ Remove OTP after successful verification
+        console.log(`✅ OTP verified for user ${username}`);
         return res.json({ message: "OTP verified successfully" });
     } else {
-        console.log(`❌ Invalid OTP for ${email}`);
+        console.log(`❌ Invalid OTP for user ${username}`);
         return res.status(400).json({ message: "Invalid OTP" });
     }
 });
