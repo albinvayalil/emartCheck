@@ -51,13 +51,13 @@ CREATE TABLE IF NOT EXISTS users (
 """)
 # ✅ Idempotent user seeding
 users_to_seed = [
-    ('u1', 'Alice', 'alice@example.com', 'pass123', True, 50000),
-    ('u2', 'Bob', 'bob@example.com', 'pass123', False, 20000),
-    ('u3', 'Charlie', 'charlie@example.com', 'pass123', True, 8000),
-    ('user4', 'David', 'david@example.com', 'pass123', True, 15000),
-    ('user5', 'Eva', 'eva@example.com', 'pass123', True, 20000),
-    ('user6', 'Frank', 'frank@example.com', 'pass123', False, 5000),
-    ('user7', 'Grace', 'grace@example.com', 'pass123', True, 30000)
+    ('u1', 'Alice', 'ignio1.platformtesting@ext.digitate.com', 'pass123', True, 50000),
+    ('u2', 'Bob', 'ignio1.platformtesting@ext.digitate.com', 'pass123', False, 20000),
+    ('u3', 'Charlie', 'ignio1.platformtesting@ext.digitate.com', 'pass123', True, 8000),
+    ('user4', 'David', 'ignio1.platformtesting@ext.digitate.com', 'pass123', True, 15000),
+    ('user5', 'Eva', 'ignio1.platformtesting@ext.digitate.com', 'pass123', True, 20000),
+    ('user6', 'Frank', 'ignio1.platformtesting@ext.digitate.com', 'pass123', False, 5000),
+    ('user7', 'Grace', 'ignio1.platformtesting@ext.digitate.com', 'pass123', True, 30000)
 ]
 
 for user in users_to_seed:
