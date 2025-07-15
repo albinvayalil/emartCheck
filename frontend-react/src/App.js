@@ -38,40 +38,37 @@ function MainApp() {
 
   const sendOtp = async () => {
     try {
-      await axios.post('http://localhost:3001/send-otp', { email: username });
-      console.log(`✅ OTP sent to ${username}`);
+      // 🔥 Send username + password only (email fetched in backend)
+      await axios.post('http://localhost:3001/send-otp', {
+        username: username,
+        password: password
+      });
+
+      console.log(`✅ OTP sent to registered email for user ${username}`);
       setShowOtpPage(true); // Show OTP input
       setError('');
     } catch (err) {
       console.error('Error sending OTP:', err);
-      setError('❌ Failed to send OTP. Please try again.');
+      setError('❌ Invalid username or password, or failed to send OTP.');
     }
   };
 
   const verifyOtp = async (otp) => {
     try {
+      // 🔥 Verify OTP (email already linked to username in backend)
       const response = await axios.post('http://localhost:3001/verify-otp', {
-        email: username,
+        username: username, // Backend uses username to map to email
         otp: otp
       });
 
       if (response.data.message === 'OTP verified successfully') {
-        // Now do the actual login
-        const loginResponse = await axios.post('/login', {
-          user_id: username,
-          password: password
-        });
-
-        if (loginResponse.data.status === 'success') {
-          setIsLoggedIn(true);
-          localStorage.setItem('username', username);
-          setCart([]); // Clear cart
-          setOrder({ items: [], total: 0 });
-          setError('');
-          navigate('/');
-        } else {
-          setError('❌ Invalid username or password');
-        }
+        // ✅ OTP verified, now mark as logged in
+        setIsLoggedIn(true);
+        localStorage.setItem('username', username);
+        setCart([]); // Clear cart
+        setOrder({ items: [], total: 0 });
+        setError('');
+        navigate('/');
       } else {
         setError('❌ Invalid OTP');
       }
@@ -146,7 +143,7 @@ function MainApp() {
       {!showOtpPage ? (
         <>
           <div className="login-container">
-            <input type="text" placeholder="Enter your email" value={username} onChange={e => setUsername(e.target.value)} className="input-field" />
+            <input type="text" placeholder="Enter your username" value={username} onChange={e => setUsername(e.target.value)} className="input-field" />
             <input type="password" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} className="input-field" />
             <button className="login-btn" onClick={sendOtp}>Send OTP</button>
             {error && <p className="error-text">{error}</p>}
@@ -156,7 +153,7 @@ function MainApp() {
       ) : (
         <div className="otp-container">
           <h2 className="otp-heading">📧 Verify OTP</h2>
-          <p className="otp-subtext">An OTP has been sent to <strong>{username}</strong>. Please enter it below:</p>
+          <p className="otp-subtext">An OTP has been sent to your registered email. Please enter it below:</p>
           <OtpInput onVerify={verifyOtp} />
           {error && <p className="error-text">{error}</p>}
         </div>
@@ -165,7 +162,7 @@ function MainApp() {
   );
 }
 
-// 🔥 Stylish OTP Input Component
+// 🔥 OTP Input Component
 function OtpInput({ onVerify }) {
   const [otp, setOtp] = useState('');
 
