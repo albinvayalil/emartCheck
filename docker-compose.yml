@@ -1,0 +1,70 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend-react
+    ports:
+      - "3000:3000"
+    depends_on:
+      - apigateway
+
+  apigateway:
+    build: ./api-gateway-nodejs
+    ports:
+      - "3001:3001"
+    depends_on:
+      - compliance
+      - order-processor-python
+
+  order-processor-python:
+    build: ./order-processor-python
+    ports:
+      - "5010:5002"
+    depends_on:
+      - ledger-service-java
+      - postgres
+    environment:
+      - PGHOST=postgres
+      - PGUSER=emartuser
+      - PGPASSWORD=emartpass
+      - PGDATABASE=emartdb
+
+  compliance:
+    build: ./compliance-service-dotnet
+    ports:
+      - "5012:80"
+    environment:
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=emartdb
+      - PGUSER=emartuser
+      - PGPASSWORD=emartpass
+    depends_on:
+      - postgres
+
+  ledger-service-java:
+    build: ./ledger-service-java
+    ports:
+      - "8080:8080"
+    environment:
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=emartdb
+      - PGUSER=emartuser
+      - PGPASSWORD=emartpass
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    container_name: emart-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: emartuser
+      POSTGRES_PASSWORD: emartpass
+      POSTGRES_DB: emartdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

@@ -1,0 +1,326 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f7fa;
+}
+
+.App {
+  max-width: 400px;
+  margin: 10vh auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.App h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* 👇 Animated logo */
+.logo {
+  width: 80px;
+  margin: 0 auto 0.5rem;
+  object-fit: contain;
+  display: block;
+}
+
+.animated-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #007bff, #00c3ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+p {
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+/* ✨ Register link */
+.register-link {
+  margin-top: 1rem;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.register-link:hover {
+  color: #0056b3;
+}
+
+/* 🧭 Nav Bar */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  font-size: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-link,
+.logout-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.product-link {
+  background-color: #007bff;
+  color: white;
+}
+
+.product-link:hover {
+  background-color: #0056b3;
+}
+
+.cart-link {
+  background-color: #28a745;
+  color: white;
+}
+
+.cart-link:hover {
+  background-color: #218838;
+}
+
+.cart-count {
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* 🚪 Logout Button */
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+}
+
+/* 🎨 eMart colorful title */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.multicolor-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.multicolor-title span {
+  display: inline-block;
+  animation: bounce 1.2s infinite ease-in-out;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.multicolor-title span:nth-child(1) { animation-delay: 0s; }
+.multicolor-title span:nth-child(2) { animation-delay: 0.1s; }
+.multicolor-title span:nth-child(3) { animation-delay: 0.2s; }
+.multicolor-title span:nth-child(4) { animation-delay: 0.3s; }
+.multicolor-title span:nth-child(5) { animation-delay: 0.4s; }
+
+.blue { color: #007bff; }
+.green { color: #28a745; }
+.orange { color: #fd7e14; }
+.red { color: #dc3545; }
+.purple { color: #6f42c1; }
+
+/* 🔗 Brand logo + animated title (top left corner) */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.brand-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  animation: bounce 1s infinite ease-in-out;
+}
+
+.brand-title span {
+  display: inline-block;
+  animation: bounce 1.2s infinite ease-in-out;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+.brand-title span:nth-child(1) { animation-delay: 0s; }
+.brand-title span:nth-child(2) { animation-delay: 0.1s; }
+.brand-title span:nth-child(3) { animation-delay: 0.2s; }
+.brand-title span:nth-child(4) { animation-delay: 0.3s; }
+.brand-title span:nth-child(5) { animation-delay: 0.4s; }
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  .top-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .brand-title {
+    font-size: 1.2rem;
+  }
+
+  .logout-btn {
+    width: 100%;
+  }
+}
+/* 🔥 OTP Page Styling */
+.otp-container {
+  max-width: 400px;
+  margin: 8vh auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.otp-container h2 {
+  color: #007bff;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 1.6rem;
+}
+
+.otp-container p {
+  margin-bottom: 1.5rem;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.otp-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otp-input-container input {
+  width: 80%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.otp-input-container button {
+  width: 85%;
+  padding: 0.75rem;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.otp-input-container button:hover {
+  background: linear-gradient(to right, #43e97b, #38f9d7);
+}
+
+.otp-heading {
+  animation: fadeIn 1s ease;
+}
+
+.otp-subtext {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.2rem;
+}
+
+@media (max-width: 600px) {
+  .otp-container {
+    margin: 5vh auto;
+    padding: 1.5rem;
+  }
+
+  .otp-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .otp-input-container input {
+    width: 100%;
+  }
+
+  .otp-input-container button {
+    width: 100%;
+  }
+}
+

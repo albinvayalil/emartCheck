@@ -1,0 +1,112 @@
+.confirmation-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 85vh;
+  background: #f8fbff;
+  padding: 2rem;
+}
+
+.confirmation-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.confirmation-card h2 {
+  color: #28a745;
+  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+}
+
+.confirmation-card p {
+  margin: 0.5rem 0;
+  color: #444;
+  font-size: 1rem;
+}
+
+.order-details {
+  margin: 1rem 0;
+  text-align: left;
+  border-radius: 10px;
+  background: #f9f9f9;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+}
+
+.order-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  font-weight: 500;
+}
+
+.order-meta {
+  text-align: left;
+  margin-top: 1rem;
+  background: #f0f4ff;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.order-meta p {
+  margin: 0.3rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-button {
+  display: inline-block;
+  margin-top: 1.5rem;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* ✅ Checkmark animation */
+.checkmark-animation {
+  font-size: 3rem;
+  animation: pop 0.6s ease-in-out;
+  margin-bottom: 1rem;
+}
+
+/* 🎉 Animations */
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 📱 Responsive adjustments */
+@media (max-width: 600px) {
+  .confirmation-card {
+    padding: 1.2rem;
+  }
+  .order-details, .order-meta {
+    font-size: 0.9rem;
+  }
+  .home-button {
+    width: 100%;
+  }
+}

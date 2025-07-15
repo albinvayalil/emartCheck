@@ -1,0 +1,6 @@
+{
+  "user4": "login_delay",
+  "user5": "payment_slow",
+  "user6": "gateway_timeout",
+  "user7": "normal_flow"
+}

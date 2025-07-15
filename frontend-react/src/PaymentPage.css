@@ -1,0 +1,140 @@
+.payment-wrapper {
+  max-width: 500px;
+  margin: 5vh auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.payment-methods {
+  display: flex;
+  justify-content: space-around;
+  margin: 1rem 0 2rem;
+}
+
+.payment-methods label {
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.payment-form input {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.card-details {
+  display: flex;
+  gap: 1rem;
+}
+
+.card-details input {
+  flex: 1;
+}
+
+.payment-summary {
+  margin-top: 2rem;
+  text-align: left;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.payment-summary h3 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.payment-summary p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+.payment-summary .total {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #000;
+  margin-top: 1rem;
+}
+
+.pay-button {
+  margin-top: 2rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.pay-button:hover {
+  background-color: #218838;
+}
+
+.payment-progress {
+  margin-top: 1.5rem;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.payment-progress .bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(270deg, #28a745, #007bff);
+  animation: slide 2s infinite linear;
+}
+
+@keyframes slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeSlideIn 0.3s ease-out;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  font-weight: bold;
+  animation: fadeSlideIn 0.4s ease-in-out;
+  text-align: center;
+}
+
