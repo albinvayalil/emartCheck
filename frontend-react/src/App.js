@@ -39,7 +39,7 @@ function MainApp() {
   const sendOtp = async () => {
     try {
       // 🔥 Send username + password only (email fetched in backend)
-      await axios.post('http://localhost:3001/send-otp', {
+      await axios.post('/send-otp', {
         username: username,
         password: password
       });
@@ -56,7 +56,7 @@ function MainApp() {
   const verifyOtp = async (otp) => {
     try {
       // 🔥 Verify OTP (email already linked to username in backend)
-      const response = await axios.post('http://localhost:3001/verify-otp', {
+      const response = await axios.post('/verify-otp', {
         username: username, // Backend uses username to map to email
         otp: otp
       });
@@ -83,6 +83,7 @@ function MainApp() {
     setUsername('');
     setPassword('');
     setCart([]);
+    setShowOtpPage(false); // ✅ Reset OTP flow on logout
     localStorage.clear();
     navigate('/');
   };
