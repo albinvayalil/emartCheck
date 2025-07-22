@@ -9,7 +9,7 @@ import requests
 
 app = Flask(__name__)
 CORS(app)
-
+os.makedirs("logs", exist_ok=True)
 # ✅ Configure logging
 logging.basicConfig(
     filename='logs/order_processor.log',
