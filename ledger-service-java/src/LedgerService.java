@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; // ✅ Added SLF4J
+import org.slf4j.LoggerFactory; // ✅ Added logger
 
 public class LedgerService {
     private static final Logger logger = LoggerFactory.getLogger(LedgerService.class); // ✅ Logger instance
