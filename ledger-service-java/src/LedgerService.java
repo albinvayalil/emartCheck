@@ -7,13 +7,17 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; // ✅ Added SLF4J
 
 public class LedgerService {
+    private static final Logger logger = LoggerFactory.getLogger(LedgerService.class); // ✅ Logger instance
+
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/record", new OrderHandler());
         server.setExecutor(null); // creates a default executor
-        System.out.println("🚀 Ledger service running on port 8080");
+        logger.info("🚀 Ledger service running on port 8080");
         server.start();
     }
 
@@ -43,7 +47,7 @@ public class LedgerService {
                 double price = json.getDouble("price");
                 double total_amount = json.getDouble("total_amount");
 
-                System.out.println("📥 Received order for user: " + user_id + " → " + name + " × " + quantity);
+                logger.info("📥 Received order for user: {} → {} × {}", user_id, name, quantity);
 
                 String host = System.getenv().getOrDefault("PGHOST", "localhost");
                 String port = System.getenv().getOrDefault("PGPORT", "5432");
@@ -52,10 +56,10 @@ public class LedgerService {
                 String password = System.getenv().getOrDefault("PGPASSWORD", "emartpass");
 
                 String url = "jdbc:postgresql://" + host + ":" + port + "/" + db;
-                System.out.println("🔗 Connecting to DB: " + url);
+                logger.info("🔗 Connecting to DB: {}", url);
 
                 Connection conn = DriverManager.getConnection(url, user, password);
-                System.out.println("✅ Connected to Postgres from Java");
+                logger.info("✅ Connected to Postgres from Java");
 
                 // Ensure table exists
                 Statement tableCheck = conn.createStatement();
@@ -71,7 +75,7 @@ public class LedgerService {
                         order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 """);
-                System.out.println("🛠️ Orders table ensured");
+                logger.info("🛠️ Orders table ensured");
 
                 // Insert order
                 PreparedStatement stmt = conn.prepareStatement("""
@@ -86,7 +90,7 @@ public class LedgerService {
                 stmt.setDouble(6, total_amount);
 
                 int inserted = stmt.executeUpdate();
-                System.out.println("✅ Inserted rows: " + inserted);
+                logger.info("✅ Inserted rows: {}", inserted);
 
                 stmt.close();
                 conn.close();
@@ -99,8 +103,7 @@ public class LedgerService {
                 os.close();
 
             } catch (Exception e) {
-                System.err.println("❌ Exception occurred:");
-                e.printStackTrace();
+                logger.error("❌ Exception occurred while processing order", e);
 
                 String response = "❌ Error: " + e.getMessage();
                 byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
