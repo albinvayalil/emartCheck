@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
@@ -9,14 +10,22 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+# ✅ Configure logging
+logging.basicConfig(
+    filename='logs/order_processor.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger()
+
 # ✅ Load Scenario Config
 scenario_config = {}
 try:
     with open('scenario_config.json') as f:
         scenario_config = json.load(f)
-    print("📖 Loaded scenario config:", scenario_config)
+    logger.info("Loaded scenario config")
 except Exception as e:
-    print(f"⚠️ Could not load scenario_config.json: {e}")
+    logger.error(f"Could not load scenario_config.json: {e}")
 
 # ✅ Database connection with retry logic
 conn = None
@@ -29,13 +38,14 @@ for attempt in range(10):
             user=os.environ.get("PGUSER", "emartuser"),
             password=os.environ.get("PGPASSWORD", "emartpass")
         )
-        print("✅ Connected to Postgres")
+        logger.info("Connected to Postgres")
         break
     except psycopg2.OperationalError as e:
-        print(f"⏳ Attempt {attempt+1}/10: Waiting for Postgres...", e)
+        logger.warning(f"Attempt {attempt+1}/10: Waiting for Postgres... {e}")
         time.sleep(3)
 else:
-    raise Exception("❌ Could not connect to Postgres after 10 attempts")
+    logger.critical("Could not connect to Postgres after 10 attempts")
+    raise Exception("Could not connect to Postgres after 10 attempts")
 
 # ✅ Create users table and seed it
 cursor = conn.cursor()
@@ -67,13 +77,13 @@ for user in users_to_seed:
             INSERT INTO users (id, name, email, password, kyc_verified, balance)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, user)
-        print(f"🆕 Seeded user: {user[0]}")
+        logger.info(f"Seeded user: {user[0]}")
     else:
-        print(f"✅ User already exists: {user[0]}")
+        logger.info(f"User already exists: {user[0]}")
 
 conn.commit()
 cursor.close()
-print("🌱 User seeding complete")
+logger.info("User seeding complete")
 
 
 # ✅ Health check
@@ -91,7 +101,7 @@ def validate_user():
     # 🔥 Check scenario for login_delay
     scenario = scenario_config.get(user_id)
     if scenario == "login_delay":
-        print(f"⏳ Simulating login delay for {user_id}")
+        logger.info(f"Simulating login delay for {user_id}")
         time.sleep(5)  # Simulate 5-second delay
 
     cursor = conn.cursor()
@@ -101,10 +111,10 @@ def validate_user():
 
     if user:
         email = user[0]
-        print(f"🔐 VALIDATE: {user_id} -> FOUND (email: {email})")
+        logger.info(f"VALIDATE: {user_id} -> FOUND (email: {email})")
         return jsonify({"status": "success", "user": user_id, "email": email})
     else:
-        print(f"🔐 VALIDATE: {user_id} -> NOT FOUND")
+        logger.warning(f"VALIDATE: {user_id} -> NOT FOUND")
         return jsonify({"status": "failed"}), 401
 
 # ✅ Compliance check fetch: Get KYC and balance
@@ -117,12 +127,14 @@ def get_user_details(user_id):
 
     if result:
         kyc, balance = result
+        logger.info(f"Fetched user details for {user_id}")
         return jsonify({
             "user_id": user_id,
             "kyc_verified": kyc,
             "balance": float(balance)
         })
     else:
+        logger.error(f"User not found: {user_id}")
         return jsonify({"error": "User not found"}), 404
 
 # ✅ Submit Order Route with retry logic for Java Ledger
@@ -134,6 +146,7 @@ def submit_order():
     total_amount = data.get("total", 0.0)
 
     if not user_id or not items:
+        logger.warning("Submit Order: Missing user_id or items")
         return jsonify({"status": "failed", "message": "Missing user_id or items"}), 400
 
     LEDGER_URL = os.environ.get("LEDGER_URL", "http://ledger-service-java:8080")
@@ -152,22 +165,24 @@ def submit_order():
         for attempt in range(3):
             try:
                 response = requests.post(f"{LEDGER_URL}/record", json=payload, timeout=5)
-                print(f"📤 Attempt {attempt+1} → Status: {response.status_code}, Response: {response.text}")
+                logger.info(f"Attempt {attempt+1} → Status: {response.status_code}, Response: {response.text}")
                 if response.ok:
                     success_count += 1
                     break
                 else:
-                    print(f"⚠️ Ledger error on attempt {attempt+1}: {response.status_code} - {response.text}")
+                    logger.warning(f"Ledger error on attempt {attempt+1}: {response.status_code} - {response.text}")
             except Exception as e:
-                print(f"❌ Ledger request failed (attempt {attempt+1}): {e}")
+                logger.error(f"Ledger request failed (attempt {attempt+1}): {e}")
             time.sleep(2 ** attempt)  # exponential backoff: 1s, 2s, 4s
 
+    status_msg = f"{success_count}/{len(items)} items recorded"
+    logger.info(f"Submit Order Result for {user_id}: {status_msg}")
     return jsonify({
         "status": "success" if success_count == len(items) else "partial",
-        "message": f"{success_count}/{len(items)} items recorded"
+        "message": status_msg
     }), 200 if success_count > 0 else 500
 
 # ✅ Start Flask
 if __name__ == "__main__":
-    print("🚀 Starting Flask on port 5002")
+    logger.info("Starting Flask on port 5002")
     app.run(host="0.0.0.0", port=5002)
